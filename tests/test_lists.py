@@ -275,7 +275,9 @@ def test_lists_combine_1():
 
 def test_list_count_1():
     assert list_count([1, 2, 3, 2, 3]) == OrderedDict([(1, 1), (2, 2), (3, 2)])
-    assert list_count(['bob', 'bob', 'frank', 'bob', 'john', 'frank', 'tim', 'tim']) == OrderedDict([('john', 1), ('frank', 2), ('tim', 2), ('bob', 3)])
+    assert list_count(['bob', 'bob', 'frank', 'bob', 'john', 'frank', 'tim', 'tim']) == OrderedDict(
+        [('john', 1), ('frank', 2), ('tim', 2), ('bob', 3)]
+    )
 
 
 def test_list_item_index_1():

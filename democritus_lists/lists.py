@@ -1,23 +1,15 @@
-# -*- coding: utf-8 -*-
-
-import os
-import sys
-from typing import Any, Union, List, Dict, Iterable
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
-import decorators
-from typings import ListOfAnys, ListOfStrs, TupleOfInts
+from typing import Any, Union, List, Dict, Iterable, Tuple
 
 # TODO: consider applying @decorators.listify_first_arg argument to all/most functions in this module
 
 
-def list_sort_by_length(list_arg: ListOfAnys, **kwargs) -> ListOfAnys:
+def list_sort_by_length(list_arg: List[Any], **kwargs) -> List[Any]:
     """."""
     sorted_list = sorted(list_arg, key=lambda x: len(x), **kwargs)
     return sorted_list
 
 
-def list_longest_item(list_arg: ListOfAnys) -> Any:
+def list_longest_item(list_arg: List[Any]) -> Any:
     """."""
     longest_item = list_sort_by_length(list_arg, reverse=True)[0]
     return longest_item
@@ -74,7 +66,7 @@ def chunk(iterable: Iterable, chunk_size: int, *, fillvalue: Any = None):
     return more_itertools.grouper(iterable, chunk_size, fillvalue=fillvalue)
 
 
-def list_item_types(list_arg: list) -> ListOfStrs:
+def list_item_types(list_arg: list) -> List[str]:
     """Return a set containing the types of all items in the list_arg."""
     # TODO: I don't like the fact that this function returns types as a string (see also the dict_key_types function)
     types = [type(item) for item in list_arg]
@@ -97,7 +89,6 @@ def list_contains_list(list_arg: list) -> bool:
     return list in list_arg_types
 
 
-@decorators.listify_first_arg
 def list_deduplicate(list_arg: list) -> list:
     """Deduplicate the list_arg."""
     if list_contains_dict(list_arg) or list_contains_list(list_arg):
@@ -128,7 +119,6 @@ def list_cycle(list_arg: list, length: Union[int, None] = None) -> list:
 
 
 # TODO: rename this function
-@decorators.listify_first_arg
 def list_delete_empty_items(list_arg: list) -> list:
     """Delete items from the list_arg is the item is an empty strings, empty list, zero, False or None."""
     empty_values = ('', [], 0, False, None)
@@ -136,7 +126,7 @@ def list_delete_empty_items(list_arg: list) -> list:
     return [i for i in list_arg if i not in empty_values]
 
 
-def lists_have_same_items(a: ListOfAnys, b: ListOfAnys, *args: ListOfAnys) -> bool:
+def lists_have_same_items(a: List[Any], b: List[Any], *args: List[Any]) -> bool:
     """See if the lists have identical items."""
     first_list = a
     remaining_lists = [b]
@@ -157,7 +147,7 @@ def lists_have_same_items(a: ListOfAnys, b: ListOfAnys, *args: ListOfAnys) -> bo
 
 def lists_are_same_length(*args: list, debug_failure: bool = False) -> bool:
     """Return whether or not the given lists are the same lengths."""
-    from dicts import dict_values
+    from democritus_dicts import dict_values
 
     lengths = list(map(len, args))
     result = list_has_single_item(lengths)
@@ -194,7 +184,7 @@ def list_run_length_encoding(list_arg: list) -> str:
 
 def list_count(list_arg: list) -> Dict[Any, int]:
     """Count each item in the iterable."""
-    from dicts import dict_sort_by_values
+    from democritus_dicts import dict_sort_by_values
 
     count = {}
     for i in list_arg:
@@ -211,7 +201,7 @@ def list_item_index(list_arg: list, item: Any) -> int:
         return -1
 
 
-def list_item_indexes(list_arg: list, item: Any) -> TupleOfInts:
+def list_item_indexes(list_arg: list, item: Any) -> Tuple[int, ...]:
     """Find the given item in the iterable. Return -1 if the item is not found."""
     indexes = [index for index, value in enumerate(list_arg) if value == item]
     return indexes
