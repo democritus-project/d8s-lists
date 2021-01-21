@@ -1,3 +1,3 @@
-democritus-dicts @ git+https://github.com/democritus-project/democritus-dicts.git#egg=democritus-dicts
+democritus-dicts
 more_itertools
 importlib-metadata; python_version < '3.8'
