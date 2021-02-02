@@ -1,108 +1,71 @@
 from typing import Any, Union, List, Dict, Iterable, Tuple
 
 # TODO: consider applying @decorators.listify_first_arg argument to all/most functions in this module
+# TODO: update the type hints on the functions below
 
 
-def list_sort_by_length(list_arg: List[Any], **kwargs) -> List[Any]:
+def iterable_sort_by_length(list_arg: List[Any], **kwargs) -> List[Any]:
     """."""
     sorted_list = sorted(list_arg, key=lambda x: len(x), **kwargs)
     return sorted_list
 
 
-def list_longest_item(list_arg: List[Any]) -> Any:
+def longest(iterable: List[Any]) -> Any:
     """."""
-    longest_item = list_sort_by_length(list_arg, reverse=True)[0]
+    longest_item = max(iterable, key=len)
     return longest_item
 
 
-def lists_interleave(*iterables):
+def shortest(iterable: List[Any]) -> Any:
     """."""
-    import more_itertools
-
-    # TODO: more_itertools also has an interleave option, but I've chosen not to use that one; may want to provide an option to stop once an iterable is exhausted
-    return listify(more_itertools.interleave_longest(*iterables))
-
-
-# TODO: rename this as "shortest" and move it to an iterable file?
-def list_shortest_item(list_arg: list) -> Any:
-    """."""
-    shortest_item = list_sort_by_length(list_arg)[0]
+    shortest_item = min(iterable, key=len)
     return shortest_item
 
 
-def list_flatten(list_arg: list, level: int = None, **kwargs) -> list:
+def flatten(list_arg: list, level: int = None, **kwargs) -> list:
     """Flatten all items in the list_arg so that they are all items in the same list."""
     import more_itertools
 
-    return listify(more_itertools.collapse(list_arg, levels=level, **kwargs))
+    return more_itertools.collapse(list_arg, levels=level, **kwargs)
 
 
-def listify(iterable):
-    """Convert the given iterable into a list - useful for generators and other items like CSV readers."""
-    return [i for i in iterable]
-
-
-def list_car(list_arg: list) -> Any:
-    return list_arg[0]
-
-
-def list_cdr(list_arg: list) -> list:
-    return list_arg[1:]
-
-
-def list_has_index(list_: list, index: Union[str, int]):
+def has_index(iterable: list, index: int) -> bool:
     """."""
+    # TODO: would it be faster to simply try to get the item at index and handle exceptions
     index_int = int(index)
-    if index_int >= 0 and index_int <= len(list_) - 1:
+    if index_int >= 0 and index_int <= len(iterable) - 1:
         return True
     else:
         return False
 
 
-def chunk(iterable: Iterable, chunk_size: int, *, fillvalue: Any = None):
-    """."""
-    import more_itertools
-
-    return more_itertools.grouper(iterable, chunk_size, fillvalue=fillvalue)
-
-
-def list_item_types(list_arg: list) -> List[str]:
+def types(iterable: list) -> List[str]:
     """Return a set containing the types of all items in the list_arg."""
-    # TODO: I don't like the fact that this function returns types as a string (see also the dict_key_types function)
-    types = [type(item) for item in list_arg]
-    return types
+    return map(type, iterable)
+
+
+def contains_item_of_type(iterable, item_type) -> bool:
+    """."""
+    return item_type in types(iterable)
 
 
 # # TODO: I made a change to the list_item_types function to return the type rather than the string... this will break some of the functions below. Need to update them
 
 
-# TODO: should I create other functions like this one?
-def list_contains_dict(list_arg: list) -> bool:
-    """Return whether or not the given list_arg contains a dict."""
-    list_arg_types = list_item_types(list_arg)
-    return dict in list_arg_types
-
-
-def list_contains_list(list_arg: list) -> bool:
-    """Return whether or not the given list_arg contains a list."""
-    list_arg_types = list_item_types(list_arg)
-    return list in list_arg_types
-
-
-def list_deduplicate(list_arg: list) -> list:
-    """Deduplicate the list_arg."""
-    if list_contains_dict(list_arg) or list_contains_list(list_arg):
+def deduplicate(iterable: list) -> list:
+    """Deduplicate the iterable."""
+    if contains_item_of_type(iterable, dict) or contains_item_of_type(iterable, list):
         deduplicated_list = []
-        for i in list_arg:
+        for i in iterable:
             if i not in deduplicated_list:
-                deduplicated_list.append(i)
+                yield i
     else:
-        # TODO: will this work for every type except for dicts???
-        deduplicated_list = list(set(list_arg))
-    return deduplicated_list
+        # TODO: will this work for every type except for dicts and lists???
+        yield from list(set(iterable))
 
 
-def list_cycle(list_arg: list, length: Union[int, None] = None) -> list:
+# TODO: is there a function in more_itertools to do this?
+def cycle(list_arg: list, length: Union[int, None] = None) -> list:
     """Cycle through the list_arg as much as needed."""
     import itertools
 
@@ -118,16 +81,45 @@ def list_cycle(list_arg: list, length: Union[int, None] = None) -> list:
         return partial_cycle
 
 
-# TODO: rename this function
-def list_delete_empty_items(list_arg: list) -> list:
+# TODO: rename this function and the one below it
+def existing_items(iterable: list) -> list:
     """Delete items from the list_arg is the item is an empty strings, empty list, zero, False or None."""
-    empty_values = ('', [], 0, False, None)
-    # TODO: not sure if this is the right way to implement this
-    return [i for i in list_arg if i not in empty_values]
+    return filter(lambda x: x, iterable)
 
 
-def lists_have_same_items(a: List[Any], b: List[Any], *args: List[Any]) -> bool:
-    """See if the lists have identical items."""
+def nonexisting_items(iterable: list) -> list:
+    """Delete items from the list_arg is the item is an empty strings, empty list, zero, False or None."""
+    return filter(lambda x: not x, iterable)
+
+
+def iterable_has_single_item(iterable: list) -> bool:
+    """Return whether the iterable has a single item in it."""
+    iterable = list_deduplicate(iterable)
+    result = len(iterable) == 1
+    return result
+
+
+# TODO: This function requires one argument... is the signature for this function correct?
+def iterables_are_same_length(*args: list, debug_failure: bool = False) -> bool:
+    """Return whether or not the given iterables are the same lengths."""
+    from democritus_dicts import dict_values
+
+    lengths = map(len, args)
+    result = iterable_has_single_item(lengths)
+
+    if debug_failure and not result:
+        list_length_breakdown = list_count(lengths)
+        minority_list_count = min(dict_values(list_length_breakdown))
+        for index, arg in enumerate(args):
+            if list_length_breakdown[len(arg)] == minority_list_count:
+                print(f'Argument {index} is not the same length as the majority of the arguments')
+
+    return result
+
+
+# TODO: keep editing here...
+def iterables_have_same_items(a: Iterable[Any], b: Iterable[Any], *args: Iterable[Any]) -> bool:
+    """See if the iterables have identical items."""
     first_list = a
     remaining_lists = [b]
     remaining_lists.extend(listify(args))
@@ -143,30 +135,6 @@ def lists_have_same_items(a: List[Any], b: List[Any], *args: List[Any]) -> bool:
         return True
     else:
         return False
-
-
-def lists_are_same_length(*args: list, debug_failure: bool = False) -> bool:
-    """Return whether or not the given lists are the same lengths."""
-    from democritus_dicts import dict_values
-
-    lengths = list(map(len, args))
-    result = list_has_single_item(lengths)
-
-    if debug_failure and not result:
-        list_length_breakdown = list_count(lengths)
-        minority_list_count = min(dict_values(list_length_breakdown))
-        for index, arg in enumerate(args):
-            if list_length_breakdown[len(arg)] == minority_list_count:
-                print(f'Argument {index} is not the same length as the majority of the arguments')
-
-    return result
-
-
-def list_has_single_item(list_arg: list) -> bool:
-    """Return whether or not the items of the given list_arg are the same."""
-    list_arg = list_deduplicate(list_arg)
-    result = len(list_arg) == 1
-    return result
 
 
 def list_run_length_encoding(list_arg: list) -> str:

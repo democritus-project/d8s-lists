@@ -4,7 +4,6 @@ from collections import OrderedDict
 
 from democritus_lists import (
     lists_are_same_length,
-    list_cycle,
     list_deduplicate,
     list_flatten,
     list_join,
@@ -306,3 +305,7 @@ def test_list_join_1():
     assert list_join([1, 2, 3], '') == '123'
     assert list_join(['a', 'b', {}], '/') == 'a/b/{}'
     assert list_join(['a', 'b', {}], '//') == 'a//b//{}'
+
+
+# TODO: write test for `remove_nonexistent_items` that test the following cases:
+# ('', [], 0, False, None)
