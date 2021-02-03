@@ -1,45 +1,28 @@
-# -*- coding: utf-8 -*-
-
 from collections import OrderedDict
 
 from democritus_lists import (
-    lists_are_same_length,
-    list_deduplicate,
-    list_flatten,
+    iterables_are_same_length,
+    deduplicate,
+    flatten,
     list_join,
-    list_run_length_encoding,
+    run_length_encoding,
     list_delete_item,
     list_item_index,
     list_count,
     lists_combine,
     list_duplicates,
     list_replace,
-    list_has_index,
+    has_index,
     list_has_mixed_types,
     list_has_single_type,
-    list_item_types,
+    types,
     list_item_indexes,
-    list_contains_dict,
-    list_sort_by_length,
-    list_longest_item,
-    list_shortest_item,
-    list_car,
-    list_cdr,
-    lists_have_same_items,
-    list_has_single_item,
-    chunk,
+    iterable_sort_by_length,
+    longest,
+    shortest,
+    iterables_have_same_items,
+    iterable_has_single_item,
 )
-
-
-def test_chunk_1():
-    result = chunk('ABCDEFG', 3, fillvalue='x')
-    assert list(result) == [('A', 'B', 'C'), ('D', 'E', 'F'), ('G', 'x', 'x')]
-
-    result = chunk(['A', 'B', 'C', 'D', 'E', 'F', 'G'], 3, fillvalue='x')
-    assert list(result) == [('A', 'B', 'C'), ('D', 'E', 'F'), ('G', 'x', 'x')]
-
-    result = chunk('ABCDEFG', 3)
-    assert list(result) == [('A', 'B', 'C'), ('D', 'E', 'F'), ('G', None, None)]
 
 
 def test_list_has_mixed_types_1():
@@ -56,74 +39,58 @@ def test_list_has_single_type_1():
     assert list_has_single_type([{}, {}])
 
 
-def test_list_has_single_item_1():
-    assert not list_has_single_item([])
-    assert list_has_single_item([0])
-    assert list_has_single_item([0, 0])
-    assert not list_has_single_item([0, 1])
+def test_iterable_has_single_item_1():
+    assert not iterable_has_single_item([])
+    assert iterable_has_single_item([0])
+    assert iterable_has_single_item([0, 0])
+    assert not iterable_has_single_item([0, 1])
 
 
-def test_lists_have_same_items():
-    assert lists_have_same_items([1], [1])
-    assert not lists_have_same_items([1], [2])
+def test_iterables_have_same_items():
+    assert iterables_have_same_items([1], [1])
+    assert not iterables_have_same_items([1], [2])
 
-    assert lists_have_same_items([2, 1], [1, 2])
-    assert not lists_have_same_items([1], [2, 1])
-    assert not lists_have_same_items([2, 1], [1])
-    assert not lists_have_same_items([2, 2], [1, 2])
+    assert iterables_have_same_items([2, 1], [1, 2])
+    assert not iterables_have_same_items([1], [2, 1])
+    assert not iterables_have_same_items([2, 1], [1])
+    assert not iterables_have_same_items([2, 2], [1, 2])
 
-    assert lists_have_same_items([1, 2, 3], [3, 1, 2])
-    assert not lists_have_same_items([1, 2, 3, 4], [3, 1, 2])
-    assert not lists_have_same_items([1, 2, 3], [3, 1, 2, 4])
-    assert not lists_have_same_items([1, 3, 3], [3, 3, 2])
-
-
-def test_lists_have_same_items():
-    assert lists_have_same_items([1, 2, 3], [3, 2, 1])
-    assert lists_have_same_items([1, 2, 3], [3, 1, 2])
-    assert not lists_have_same_items([1, 2, 3, 3], [1, 2, 2, 3])
+    assert iterables_have_same_items([1, 2, 3], [3, 1, 2])
+    assert not iterables_have_same_items([1, 2, 3, 4], [3, 1, 2])
+    assert not iterables_have_same_items([1, 2, 3], [3, 1, 2, 4])
+    assert not iterables_have_same_items([1, 3, 3], [3, 3, 2])
 
 
-def test_list_contains_dict_1():
-    assert list_contains_dict([{'a': 1}, 1, 2, 3])
-    assert not list_contains_dict([1, 2, 3])
+def test_iterables_have_same_items():
+    assert iterables_have_same_items([1, 2, 3], [3, 2, 1])
+    assert iterables_have_same_items([1, 2, 3], [3, 1, 2])
+    assert not iterables_have_same_items([1, 2, 3, 3], [1, 2, 2, 3])
 
 
-def test_list_car_1():
-    l = [1, 2, 3]
-    result = list_car(l)
-    assert result == 1
+def test_iterable_contains_item_of_type_1():
+    assert iterable_contains_item_of_type([{'a': 1}, 1, 2, 3], dict)
+    assert not iterable_contains_item_of_type([1, 2, 3], dict)
 
 
-def test_list_cdr_1():
-    l = [1, 2, 3]
-    result = list_cdr(l)
-    assert result == [2, 3]
-
-    l = [0]
-    result = list_cdr(l)
-    assert result == []
-
-
-def test_list_longest_item_1():
+def test_longest_1():
     l = ['a', 'aa', 'aaa']
-    result = list_longest_item(l)
+    result = longest(l)
     assert result == 'aaa'
 
 
-def test_list_longest_item_1():
+def test_shortest_1():
     l = ['a', 'aa', 'aaa']
-    result = list_shortest_item(l)
+    result = shortest(l)
     assert result == 'a'
 
 
-def test_list_sort_by_length_1():
+def test_iterable_sort_by_length_1():
     l = ['a', 'aa', 'aaa']
-    result = list_sort_by_length(l)
+    result = iterable_sort_by_length(l)
     assert result == ['a', 'aa', 'aaa']
 
     l = ['a', 'aa', 'aaa']
-    result = list_sort_by_length(l, reverse=True)
+    result = iterable_sort_by_length(l, reverse=True)
     assert result == ['aaa', 'aa', 'a']
 
 
@@ -132,43 +99,43 @@ def test_list_item_indexes_1():
     assert list_item_indexes([1, 2, 1, 2], 2) == [1, 3]
 
 
-def test_list_flatten_1():
-    assert list_flatten([1, 2, 3]) == [1, 2, 3]
-    assert list_flatten([1, [2], 3]) == [1, 2, 3]
-    assert list_flatten([1, [2, 3]]) == [1, 2, 3]
-    assert list_flatten([(1, 2), ([3, 4], [[5], [6]])]) == [1, 2, 3, 4, 5, 6]
-    assert list_flatten([(1, 2), ([3, 4], [[5], [6]])], level=1) == [1, 2, [3, 4], [[5], [6]]]
+def test_flatten_1():
+    assert flatten([1, 2, 3]) == [1, 2, 3]
+    assert flatten([1, [2], 3]) == [1, 2, 3]
+    assert flatten([1, [2, 3]]) == [1, 2, 3]
+    assert flatten([(1, 2), ([3, 4], [[5], [6]])]) == [1, 2, 3, 4, 5, 6]
+    assert flatten([(1, 2), ([3, 4], [[5], [6]])], level=1) == [1, 2, [3, 4], [[5], [6]]]
 
 
-def test_list_has_index_1():
-    assert not list_has_index(['a', 'b', 'c'], -1)
-    assert list_has_index(['a', 'b', 'c'], 0)
-    assert list_has_index(['a', 'b', 'c'], 1)
-    assert list_has_index(['a', 'b', 'c'], 2)
-    assert not list_has_index(['a', 'b', 'c'], 3)
-    assert not list_has_index(['a', 'b', 'c'], 4)
-    assert not list_has_index(['a', 'b', 'c'], 4000)
+def test_has_index_1():
+    assert not has_index(['a', 'b', 'c'], -1)
+    assert has_index(['a', 'b', 'c'], 0)
+    assert has_index(['a', 'b', 'c'], 1)
+    assert has_index(['a', 'b', 'c'], 2)
+    assert not has_index(['a', 'b', 'c'], 3)
+    assert not has_index(['a', 'b', 'c'], 4)
+    assert not has_index(['a', 'b', 'c'], 4000)
 
 
-def test_lists_are_same_length_1():
+def test_iterables_are_same_length_1():
     l1 = ['a']
     l2 = ['b']
     l3 = ['a']
     l4 = ['a', 'b']
     l5 = []
 
-    assert lists_are_same_length(l1, l2)
-    assert lists_are_same_length(l1, l2, l3)
-    assert not lists_are_same_length(l1, l2, l3, l4)
-    assert not lists_are_same_length(l1, l2, l3, l4, l5)
-    assert lists_are_same_length(l5)
-    assert lists_are_same_length(l1)
-    assert not lists_are_same_length(l1, l5)
+    assert iterables_are_same_length(l1, l2)
+    assert iterables_are_same_length(l1, l2, l3)
+    assert not iterables_are_same_length(l1, l2, l3, l4)
+    assert not iterables_are_same_length(l1, l2, l3, l4, l5)
+    assert iterables_are_same_length(l5)
+    assert iterables_are_same_length(l1)
+    assert not iterables_are_same_length(l1, l5)
 
 
-def test_list_item_types_1():
-    assert list_item_types([1, 2, 3]) == [int, int, int]
-    assert list_item_types(['a', 'b', 'c']) == [str, str, str]
+def test_types_1():
+    assert types([1, 2, 3]) == [int, int, int]
+    assert types(['a', 'b', 'c']) == [str, str, str]
 
 
 def test_list_replace_docs_1():
@@ -221,43 +188,46 @@ def test_list_replace_docs_1():
     assert old_list == [[{'a': 1}], [{'b': 2}], [{'c': 3}]]
 
 
-def test_list_deduplicate_1():
-    assert list_deduplicate([1, 2, 3, 3, 3, 4, 2]) == [1, 2, 3, 4]
+def test_deduplicate_1():
+    assert deduplicate([1, 2, 3, 3, 3, 4, 2]) == [1, 2, 3, 4]
 
 
-def test_list_deduplicate_dicts():
-    assert list_deduplicate([{'a': 1}, 1, {'b': 2}]) == [{'a': 1}, 1, {'b': 2}]
-    assert list_deduplicate([{'a': 1}, {'a': 1}, {'b': 2}]) == [{'a': 1}, {'b': 2}]
+def test_deduplicate_dicts():
+    assert deduplicate([{'a': 1}, 1, {'b': 2}]) == [{'a': 1}, 1, {'b': 2}]
+    assert deduplicate([{'a': 1}, {'a': 1}, {'b': 2}]) == [{'a': 1}, {'b': 2}]
 
 
 def test_list_duplicates():
-    assert lists_have_same_items(list_duplicates([1, 2, 3, 3, 2]), [3, 2])
-    assert lists_have_same_items(list_duplicates([1, 2], [2, 3]), [2])
-    assert lists_have_same_items(list_duplicates([1, 2, 2], [2, 2, 3]), [2])
+    assert iterables_have_same_items(list_duplicates([1, 2, 3, 3, 2]), [3, 2])
+    assert iterables_have_same_items(list_duplicates([1, 2], [2, 3]), [2])
+    assert iterables_have_same_items(list_duplicates([1, 2, 2], [2, 2, 3]), [2])
 
-    assert lists_have_same_items(list_duplicates([1, 2, 3, 3, 2], deduplicate_results=False), [2, 3, 3, 2])
-    assert lists_have_same_items(list_duplicates([1, 2, 2], [2, 2, 3], deduplicate_results=False), [2, 2])
-    assert lists_have_same_items(list_duplicates([1, 2], [1, 2], deduplicate_results=False), [1, 2])
-
-
-def test_list_run_length_encoding_1():
-    assert list_run_length_encoding(['a']) == '1a'
-    assert list_run_length_encoding(['a', 'a']) == '2a'
-    assert list_run_length_encoding(['a', 'b']) == '1a1b'
-    assert list_run_length_encoding(['a', 'a', 'b']) == '2a1b'
-    assert list_run_length_encoding(['a', 'b', 'b']) == '1a2b'
-    assert list_run_length_encoding(['a', 'b', 'a']) == '1a1b1a'
+    assert iterables_have_same_items(list_duplicates([1, 2, 3, 3, 2], deduplicate_results=False), [2, 3, 3, 2])
+    assert iterables_have_same_items(list_duplicates([1, 2, 2], [2, 2, 3], deduplicate_results=False), [2, 2])
+    assert iterables_have_same_items(list_duplicates([1, 2], [1, 2], deduplicate_results=False), [1, 2])
 
 
-def test_list_run_length_encoding_2():
-    assert list_run_length_encoding(['aa']) == '1aa'
-    assert list_run_length_encoding(['aa', 'aa']) == '2aa'
-    assert list_run_length_encoding(['aa', 'bbb']) == '1aa1bbb'
-    assert list_run_length_encoding(['aa', 'aa', 'bbb']) == '2aa1bbb'
-    assert list_run_length_encoding(['aa', 'bbb', 'bbb']) == '1aa2bbb'
-    assert list_run_length_encoding(['aa', 'bbb', 'aa']) == '1aa1bbb1aa'
+def test_run_length_encoding_1():
+    assert run_length_encoding('foobar') == '1f2o1b1a1r'
+    assert run_length_encoding(list('foobar')) == '1f2o1b1a1r'
+
+    assert run_length_encoding(['a']) == '1a'
+    assert run_length_encoding(['a', 'a']) == '2a'
+    assert run_length_encoding(['a', 'b']) == '1a1b'
+    assert run_length_encoding(['a', 'a', 'b']) == '2a1b'
+    assert run_length_encoding(['a', 'b', 'b']) == '1a2b'
+    assert run_length_encoding(['a', 'b', 'a']) == '1a1b1a'
+
+
+def test_run_length_encoding_2():
+    assert run_length_encoding(['aa']) == '1aa'
+    assert run_length_encoding(['aa', 'aa']) == '2aa'
+    assert run_length_encoding(['aa', 'bbb']) == '1aa1bbb'
+    assert run_length_encoding(['aa', 'aa', 'bbb']) == '2aa1bbb'
+    assert run_length_encoding(['aa', 'bbb', 'bbb']) == '1aa2bbb'
+    assert run_length_encoding(['aa', 'bbb', 'aa']) == '1aa1bbb1aa'
     assert (
-        list_run_length_encoding('WWWWWWWWWWWWBWWWWWWWWWWWWBBBWWWWWWWWWWWWWWWWWWWWWWWWBWWWWWWWWWWWWWW')
+        run_length_encoding('WWWWWWWWWWWWBWWWWWWWWWWWWBBBWWWWWWWWWWWWWWWWWWWWWWWWBWWWWWWWWWWWWWW')
         == '12W1B12W3B24W1B14W'
     )
 

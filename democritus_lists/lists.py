@@ -44,17 +44,14 @@ def types(iterable: list) -> List[str]:
     return map(type, iterable)
 
 
-def contains_item_of_type(iterable, item_type) -> bool:
+def iterable_contains_item_of_type(iterable, item_type) -> bool:
     """."""
     return item_type in types(iterable)
 
 
-# # TODO: I made a change to the list_item_types function to return the type rather than the string... this will break some of the functions below. Need to update them
-
-
 def deduplicate(iterable: list) -> list:
     """Deduplicate the iterable."""
-    if contains_item_of_type(iterable, dict) or contains_item_of_type(iterable, list):
+    if iterable_contains_item_of_type(iterable, dict) or iterable_contains_item_of_type(iterable, list):
         deduplicated_list = []
         for i in iterable:
             if i not in deduplicated_list:
@@ -94,7 +91,7 @@ def nonexisting_items(iterable: list) -> list:
 
 def iterable_has_single_item(iterable: list) -> bool:
     """Return whether the iterable has a single item in it."""
-    iterable = list_deduplicate(iterable)
+    iterable = deduplicate(iterable)
     result = len(iterable) == 1
     return result
 
@@ -117,31 +114,29 @@ def iterables_are_same_length(*args: list, debug_failure: bool = False) -> bool:
     return result
 
 
-# TODO: keep editing here...
 def iterables_have_same_items(a: Iterable[Any], b: Iterable[Any], *args: Iterable[Any]) -> bool:
     """See if the iterables have identical items."""
     first_list = a
     remaining_lists = [b]
-    remaining_lists.extend(listify(args))
+    remaining_lists.extend(list(args))
 
-    if lists_are_same_length(a, b) and lists_are_same_length(*remaining_lists):
+    if iterables_are_same_length(a, b) and iterables_are_same_length(*remaining_lists):
         for item in first_list:
             first_list_count = first_list.count(item)
             item_counts = [list_.count(item) for list_ in remaining_lists]
-            monotonic_list = list_has_single_item(item_counts)
-            same_count = list_car(item_counts) == first_list_count
-            if not monotonic_list or not same_count:
+            same_count = item_counts[0] == first_list_count
+            if not list_has_single_item(item_counts) or not same_count:
                 return False
         return True
     else:
         return False
 
 
-def list_run_length_encoding(list_arg: list) -> str:
+def run_length_encoding(iterable: list) -> str:
     """Perform run-length encoding on the given array. See https://en.wikipedia.org/wiki/Run-length_encoding for more details."""
     encodings = []
 
-    for i in list_arg:
+    for i in iterable:
         if len(encodings) > 0 and i == encodings[-1]['value']:
             encodings[-1]['length'] += 1
         else:
@@ -150,6 +145,7 @@ def list_run_length_encoding(list_arg: list) -> str:
     return ''.join(['{}{}'.format(entry['length'], entry['value']) for entry in encodings])
 
 
+# TODO: keep editing here...
 def list_count(list_arg: list) -> Dict[Any, int]:
     """Count each item in the iterable."""
     from democritus_dicts import dict_sort_by_values
@@ -196,31 +192,31 @@ def list_duplicates(list_a: list, list_b: list = None, *, deduplicate_results: b
                 duplicates.append(item)
 
         if deduplicate_results:
-            return list_deduplicate(duplicates)
+            return deduplicate(duplicates)
         else:
             return duplicates
 
 
 def list_has_item_of_type(list_arg: list, type_arg) -> bool:
     """Return whether or not there is at least one item of the type specified by the type_arg in the list_arg."""
-    return type_arg in list_item_types(list_arg)
+    return type_arg in types(list_arg)
 
 
 def list_has_all_items_of_type(list_arg: list, type_arg) -> bool:
     """Return whether or not all items in list_arg are of the type specified by the type_arg."""
-    item_types = list_item_types(list_arg)
+    item_types = types(list_arg)
     result = item_types[0] == type_arg and list_has_single_item(item_types)
     return result
 
 
 def list_has_mixed_types(list_arg: list) -> bool:
     """Return whether or not the list_arg has items with two or more types."""
-    return len(list_deduplicate(list_item_types(list_arg))) >= 2
+    return len(deduplicate(types(list_arg))) >= 2
 
 
 def list_has_single_type(list_arg: list) -> bool:
     """Return whether or not the list_arg has items of only one type."""
-    return len(list_deduplicate(list_item_types(list_arg))) == 1
+    return len(deduplicate(types(list_arg))) == 1
 
 
 def list_join(list_arg: list, join_characters: str = ',') -> str:
@@ -241,7 +237,7 @@ def list_delete_item(list_arg: list, item_to_delete: Any) -> list:
     """Remove all instances of the given item_to_delete from the list_arg."""
     from itertools import filterfalse
 
-    result = listify(filterfalse(lambda x: x == item_to_delete, list_arg))
+    result = filterfalse(lambda x: x == item_to_delete, list_arg)
     return result
 
 
