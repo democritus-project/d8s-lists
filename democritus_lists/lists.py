@@ -1,3 +1,4 @@
+import itertools
 from typing import Any, Union, List, Dict, Iterable, Tuple
 
 # TODO: consider applying @decorators.listify_first_arg argument to all/most functions in this module
@@ -44,21 +45,23 @@ def types(iterable: list) -> List[str]:
     return map(type, iterable)
 
 
-def iterable_contains_item_of_type(iterable, item_type) -> bool:
+def iterable_contains_item_of_type(iterable, item_types) -> bool:
     """."""
-    return item_type in types(iterable)
+    return any(item_types) in types(iterable)
 
 
 def deduplicate(iterable: list) -> list:
     """Deduplicate the iterable."""
-    if iterable_contains_item_of_type(iterable, dict) or iterable_contains_item_of_type(iterable, list):
+    og_iterable, temp_iterable = itertools.tee(iterable)
+
+    if iterable_contains_item_of_type(temp_iterable, (dict, list)):
         deduplicated_list = []
-        for i in iterable:
+        for i in og_iterable:
             if i not in deduplicated_list:
                 yield i
     else:
         # TODO: will this work for every type except for dicts and lists???
-        yield from list(set(iterable))
+        yield from list(set(og_iterable))
 
 
 # TODO: is there a function in more_itertools to do this?
@@ -78,14 +81,13 @@ def cycle(list_arg: list, length: Union[int, None] = None) -> list:
         return partial_cycle
 
 
-# TODO: rename this function and the one below it
-def existing_items(iterable: list) -> list:
-    """Delete items from the list_arg is the item is an empty strings, empty list, zero, False or None."""
+def truthy_items(iterable: list) -> list:
+    """Return an iterable with only elements of the given iterable which evaluate to True (see https://docs.python.org/3.9/library/stdtypes.html#truth-value-testing)."""
     return filter(lambda x: x, iterable)
 
 
-def nonexisting_items(iterable: list) -> list:
-    """Delete items from the list_arg is the item is an empty strings, empty list, zero, False or None."""
+def nontruthy_items(iterable: list) -> list:
+    """Return an iterable with only elements of the given iterable which evaluate to False (see https://docs.python.org/3.9/library/stdtypes.html#truth-value-testing)."""
     return filter(lambda x: not x, iterable)
 
 
@@ -105,7 +107,7 @@ def iterables_are_same_length(*args: list, debug_failure: bool = False) -> bool:
     result = iterable_has_single_item(lengths)
 
     if debug_failure and not result:
-        list_length_breakdown = list_count(lengths)
+        list_length_breakdown = iterable_count(lengths)
         minority_list_count = min(dict_values(list_length_breakdown))
         for index, arg in enumerate(args):
             if list_length_breakdown[len(arg)] == minority_list_count:
@@ -132,21 +134,13 @@ def iterables_have_same_items(a: Iterable[Any], b: Iterable[Any], *args: Iterabl
         return False
 
 
-def run_length_encoding(iterable: list) -> str:
+def run_length_encoding(iterable: list, output_as_string: bool = False) -> Iterable[str]:
     """Perform run-length encoding on the given array. See https://en.wikipedia.org/wiki/Run-length_encoding for more details."""
-    encodings = []
-
-    for i in iterable:
-        if len(encodings) > 0 and i == encodings[-1]['value']:
-            encodings[-1]['length'] += 1
-        else:
-            encodings.append({'value': i, 'length': 1})
-
-    return ''.join(['{}{}'.format(entry['length'], entry['value']) for entry in encodings])
+    run_length_encodings = (f'{len(tuple(g))}{k}' for k, g in itertools.groupby('AAAABBBCCDAABBB'))
+    return run_length_encodings
 
 
-# TODO: keep editing here...
-def list_count(list_arg: list) -> Dict[Any, int]:
+def iterable_count(iterable: list) -> Dict[Any, int]:
     """Count each item in the iterable."""
     from democritus_dicts import dict_sort_by_values
 
@@ -211,12 +205,14 @@ def list_has_all_items_of_type(list_arg: list, type_arg) -> bool:
 
 def list_has_mixed_types(list_arg: list) -> bool:
     """Return whether or not the list_arg has items with two or more types."""
-    return len(deduplicate(types(list_arg))) >= 2
+    print(f'tuple(types(list_arg)): {tuple(types(list_arg))}')
+    print(tuple(deduplicate(types(list_arg))))
+    return len(tuple(deduplicate(types(list_arg)))) >= 2
 
 
 def list_has_single_type(list_arg: list) -> bool:
     """Return whether or not the list_arg has items of only one type."""
-    return len(deduplicate(types(list_arg))) == 1
+    return len(tuple(deduplicate(types(list_arg)))) == 1
 
 
 def list_join(list_arg: list, join_characters: str = ',') -> str:
