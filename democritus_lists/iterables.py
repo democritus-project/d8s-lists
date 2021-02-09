@@ -45,19 +45,40 @@ def types(iterable: list) -> List[str]:
     return map(type, iterable)
 
 
-def iterable_contains_item_of_type(iterable, item_types) -> bool:
-    """."""
-    return any(item_types) in types(iterable)
+def iterable_item_of_types(iterable, item_types) -> bool:
+    """Return True if the iterable has any items that are of the types given in item_types. Otherwise, return False."""
+    iterable_types = types(iterable)
+    for item_type in item_types:
+        if item_type in iterable_types:
+            return True
+    return False
+
+
+def iterable_all_items_of_types(iterable, item_types) -> bool:
+    """Return True if all items in the iterable are of a type given in item_types. Otherwise, return False."""
+    iterable_types = types(iterable)
+    for item_type in item_types:
+        if item_type not in iterable_types:
+            return False
+    return True
+
+
+def iterable_has_all_items_of_type(iterable: list, type_arg) -> bool:
+    """Return whether or not all iterable in iterable are of the type specified by the type_arg."""
+    item_types = types(iterable)
+    result = item_types[0] == type_arg and iterable_has_single_item(item_types)
+    return result
 
 
 def deduplicate(iterable: list) -> list:
     """Deduplicate the iterable."""
     og_iterable, temp_iterable = itertools.tee(iterable)
 
-    if iterable_contains_item_of_type(temp_iterable, (dict, list)):
+    if iterable_item_of_types(temp_iterable, (dict, list)):
         deduplicated_list = []
         for i in og_iterable:
             if i not in deduplicated_list:
+                deduplicated_list.append(i)
                 yield i
     else:
         # TODO: will this work for every type except for dicts and lists???
@@ -72,7 +93,7 @@ def cycle(list_arg: list, length: Union[int, None] = None) -> list:
     if length is None:
         return itertools.cycle(list_arg)
     else:
-        full_cycle = list_cycle(list_arg, None)
+        full_cycle = cycle(list_arg, None)
         partial_cycle = []
         for index, item in enumerate(full_cycle):
             partial_cycle.append(item)
@@ -94,7 +115,7 @@ def nontruthy_items(iterable: list) -> list:
 def iterable_has_single_item(iterable: list) -> bool:
     """Return whether the iterable has a single item in it."""
     iterable = deduplicate(iterable)
-    result = len(iterable) == 1
+    result = len(tuple(iterable)) == 1
     return result
 
 
@@ -127,7 +148,7 @@ def iterables_have_same_items(a: Iterable[Any], b: Iterable[Any], *args: Iterabl
             first_list_count = first_list.count(item)
             item_counts = [list_.count(item) for list_ in remaining_lists]
             same_count = item_counts[0] == first_list_count
-            if not list_has_single_item(item_counts) or not same_count:
+            if not iterable_has_single_item(item_counts) or not same_count:
                 return False
         return True
     else:
@@ -136,7 +157,7 @@ def iterables_have_same_items(a: Iterable[Any], b: Iterable[Any], *args: Iterabl
 
 def run_length_encoding(iterable: list, output_as_string: bool = False) -> Iterable[str]:
     """Perform run-length encoding on the given array. See https://en.wikipedia.org/wiki/Run-length_encoding for more details."""
-    run_length_encodings = (f'{len(tuple(g))}{k}' for k, g in itertools.groupby('AAAABBBCCDAABBB'))
+    run_length_encodings = (f'{len(tuple(g))}{k}' for k, g in itertools.groupby(iterable))
     return run_length_encodings
 
 
@@ -145,110 +166,53 @@ def iterable_count(iterable: list) -> Dict[Any, int]:
     from democritus_dicts import dict_sort_by_values
 
     count = {}
-    for i in list_arg:
+    for i in iterable:
         count[i] = count.get(i, 0) + 1
     count = dict_sort_by_values(count)
     return count
 
 
-def list_item_index(list_arg: list, item: Any) -> int:
+def iterable_item_index(iterable: list, item: Any) -> int:
     """Find the given item in the iterable. Return -1 if the item is not found."""
     try:
-        return list_arg.index(item)
+        return iterable.index(item)
     except ValueError:
         return -1
 
 
-def list_item_indexes(list_arg: list, item: Any) -> Tuple[int, ...]:
+def iterable_item_indexes(list_arg: list, item: Any) -> Tuple[int, ...]:
     """Find the given item in the iterable. Return -1 if the item is not found."""
     indexes = [index for index, value in enumerate(list_arg) if value == item]
     return indexes
 
 
-def list_duplicates(list_a: list, list_b: list = None, *, deduplicate_results: bool = True) -> list:
-    """Find duplicates. If deduplicate_results is False, all instances of a duplicate will be added to the resulting list."""
-    if list_b is not None:
-        if deduplicate_results:
-            return list(set(list_a).intersection(set(list_b)))
-        else:
-            duplicates = []
-            for item in list_a:
-                if list_b.count(item) > 0:
-                    duplicates.append(item)
-            return duplicates
-    else:
-        # TODO: I used to use pydash, but have removed it to simplify the required packages
-        # import pydash.arrays
-        # return pydash.arrays.duplicates(list_a)
-        duplicates = []
-        for item in list_a:
-            if list_a.count(item) > 1:
-                duplicates.append(item)
-
-        if deduplicate_results:
-            return deduplicate(duplicates)
-        else:
-            return duplicates
+def duplicates(iterable: list) -> list:
+    """Find duplicates in the given iterable."""
+    duplicates = []
+    for item in iterable:
+        if iterable.count(item) > 1:
+            yield item
 
 
-def list_has_item_of_type(list_arg: list, type_arg) -> bool:
-    """Return whether or not there is at least one item of the type specified by the type_arg in the list_arg."""
-    return type_arg in types(list_arg)
-
-
-def list_has_all_items_of_type(list_arg: list, type_arg) -> bool:
-    """Return whether or not all items in list_arg are of the type specified by the type_arg."""
-    item_types = types(list_arg)
-    result = item_types[0] == type_arg and list_has_single_item(item_types)
-    return result
-
-
-def list_has_mixed_types(list_arg: list) -> bool:
+def iterable_has_mixed_types(list_arg: list) -> bool:
     """Return whether or not the list_arg has items with two or more types."""
     print(f'tuple(types(list_arg)): {tuple(types(list_arg))}')
     print(tuple(deduplicate(types(list_arg))))
     return len(tuple(deduplicate(types(list_arg)))) >= 2
 
 
-def list_has_single_type(list_arg: list) -> bool:
+def iterable_has_single_type(list_arg: list) -> bool:
     """Return whether or not the list_arg has items of only one type."""
     return len(tuple(deduplicate(types(list_arg)))) == 1
 
 
-def list_join(list_arg: list, join_characters: str = ',') -> str:
-    string_list = [str(item) for item in list_arg]
-    return join_characters.join(string_list)
-
-
-def lists_combine(list_a: list, list_b: list, *args: list) -> list:
-    """Combine list_a, list_b, and any args into one list."""
-    list_a.extend(list_b)
-    for list_ in args:
-        list_a.extend(list_)
-    return list_a
-
-
-# TODO: consider renaming this to `list_delete_all_instances_of_item`
-def list_delete_item(list_arg: list, item_to_delete: Any) -> list:
-    """Remove all instances of the given item_to_delete from the list_arg."""
-    from itertools import filterfalse
-
-    result = filterfalse(lambda x: x == item_to_delete, list_arg)
-    return result
-
-
-def list_replace(list_arg: list, old_value, new_value, *, replace_in_place: bool = True) -> list:
-    """Replace all instances of the old_value with the new_value in the given list_arg."""
-    old_value_indexes = list_item_indexes(list_arg, old_value)
-    new_list = list_delete_item(list_arg, old_value)
-
-    for index in old_value_indexes:
-        if replace_in_place:
-            new_list.insert(index, new_value)
+def iterable_replace(iterable: list, old_value, new_value, *, replace_in_place: bool = True) -> list:
+    """Replace all instances of the old_value with the new_value in the given iterable."""
+    for index, value in enumerate(iterable):
+        if value == old_value:
+            yield new_value
         else:
-            new_list.append(new_value)
-
-    return new_list
+            yield value
 
 
 # def list_entropy(list_arg: list):
