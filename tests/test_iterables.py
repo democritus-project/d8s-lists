@@ -22,7 +22,22 @@ from democritus_lists import (
     iterable_item_of_types,
     iterable_all_items_of_types,
     cycle,
+    iterable_has_all_items_of_type,
 )
+
+
+def test_iterable_has_all_items_of_type_1():
+    assert not iterable_has_all_items_of_type([1, 'a'], int)
+    assert iterable_has_all_items_of_type([1, 2, 3, 4, 5], int)
+    assert iterable_has_all_items_of_type([1, 2], int)
+    assert not iterable_has_all_items_of_type([1, {2}], int)
+
+
+def test_iterable_all_items_of_types_1():
+    assert not iterable_all_items_of_types([1, 'a'], (int,))
+    assert iterable_all_items_of_types([1, 'a'], (int, str))
+    assert iterable_all_items_of_types([1, 'a', 3, 4], (int, str))
+    assert not iterable_all_items_of_types([1, 'a', 3, {4}], (int, str))
 
 
 def test_iterable_has_mixed_types_1():
@@ -131,6 +146,8 @@ def test_iterables_are_same_length_1():
     assert iterables_are_same_length(l5)
     assert iterables_are_same_length(l1)
     assert not iterables_are_same_length(l1, l5)
+
+    assert not iterables_are_same_length(l1, l4, debug_failure=True)
 
 
 def test_types_1():

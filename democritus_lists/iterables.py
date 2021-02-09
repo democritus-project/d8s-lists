@@ -48,8 +48,8 @@ def types(iterable: list) -> List[str]:
 def iterable_item_of_types(iterable, item_types) -> bool:
     """Return True if the iterable has any items that are of the types given in item_types. Otherwise, return False."""
     iterable_types = types(iterable)
-    for item_type in item_types:
-        if item_type in iterable_types:
+    for iterable_type in iterable_types:
+        if iterable_type in item_types:
             return True
     return False
 
@@ -57,16 +57,16 @@ def iterable_item_of_types(iterable, item_types) -> bool:
 def iterable_all_items_of_types(iterable, item_types) -> bool:
     """Return True if all items in the iterable are of a type given in item_types. Otherwise, return False."""
     iterable_types = types(iterable)
-    for item_type in item_types:
-        if item_type not in iterable_types:
+    for iterable_type in iterable_types:
+        if iterable_type not in item_types:
             return False
     return True
 
 
 def iterable_has_all_items_of_type(iterable: list, type_arg) -> bool:
     """Return whether or not all iterable in iterable are of the type specified by the type_arg."""
-    item_types = types(iterable)
-    result = item_types[0] == type_arg and iterable_has_single_item(item_types)
+    item_types_1, item_types_2 = itertools.tee(types(iterable))
+    result = iterable_has_single_item(item_types_1) and next(item_types_2) == type_arg
     return result
 
 
@@ -124,11 +124,11 @@ def iterables_are_same_length(*args: list, debug_failure: bool = False) -> bool:
     """Return whether or not the given iterables are the same lengths."""
     from democritus_dicts import dict_values
 
-    lengths = map(len, args)
-    result = iterable_has_single_item(lengths)
+    lengths_1, lengths_2 = itertools.tee(map(len, args))
+    result = iterable_has_single_item(lengths_1)
 
     if debug_failure and not result:
-        list_length_breakdown = iterable_count(lengths)
+        list_length_breakdown = iterable_count(lengths_2)
         minority_list_count = min(dict_values(list_length_breakdown))
         for index, arg in enumerate(args):
             if list_length_breakdown[len(arg)] == minority_list_count:
