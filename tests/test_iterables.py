@@ -1,5 +1,7 @@
 from collections import OrderedDict
 
+import pytest
+
 from democritus_lists import (
     iterables_are_same_length,
     deduplicate,
@@ -23,7 +25,23 @@ from democritus_lists import (
     iterable_all_items_of_types,
     cycle,
     iterable_has_all_items_of_type,
+    truthy_items,
+    nontruthy_items,
 )
+
+
+@pytest.mark.parametrize("test_input,result_contents", [((None, False, [], 0), ()), ((1, 0, True, False), (1, True))])
+def test_truthy_items_1(test_input, result_contents):
+    result = tuple(truthy_items(test_input))
+    assert result == result_contents
+
+
+@pytest.mark.parametrize(
+    "test_input,result_contents", [((None, False, [], 0), (None, False, [], 0)), ((1, 0, True, False), (0, False))]
+)
+def test_nontruthy_items_1(test_input, result_contents):
+    result = tuple(nontruthy_items(test_input))
+    assert result == result_contents
 
 
 def test_iterable_has_all_items_of_type_1():
@@ -61,9 +79,10 @@ def test_iterable_has_single_item_1():
     assert not iterable_has_single_item([0, 1])
 
 
-def test_iterables_have_same_items():
+def test_iterables_have_same_items_docs_1():
     assert iterables_have_same_items([1], [1])
     assert not iterables_have_same_items([1], [2])
+    assert not iterables_have_same_items([1], [1, 1])
 
     assert iterables_have_same_items([2, 1], [1, 2])
     assert not iterables_have_same_items([1], [2, 1])
@@ -76,10 +95,11 @@ def test_iterables_have_same_items():
     assert not iterables_have_same_items([1, 3, 3], [3, 3, 2])
 
 
-def test_iterables_have_same_items():
+def test_iterables_have_same_items_docs_2():
     assert iterables_have_same_items([1, 2, 3], [3, 2, 1])
     assert iterables_have_same_items([1, 2, 3], [3, 1, 2])
     assert not iterables_have_same_items([1, 2, 3, 3], [1, 2, 2, 3])
+    assert not iterables_have_same_items([1], [1, 2])
 
 
 def test_iterable_item_of_types_1():
@@ -149,6 +169,7 @@ def test_iterables_are_same_length_1():
     assert not iterables_are_same_length(l1, l5)
 
     assert not iterables_are_same_length(l1, l4, debug_failure=True)
+    assert not iterables_are_same_length(l1, l2, l3, l4, l5, debug_failure=True)
 
 
 def test_types_1():

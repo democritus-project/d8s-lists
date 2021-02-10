@@ -133,7 +133,7 @@ def iterables_are_same_length(
     if debug_failure and not result:
         list_length_breakdown = iterable_count(lengths_2)
         minority_list_count = min(dict_values(list_length_breakdown))
-        for index, arg in enumerate(args):
+        for index, arg in enumerate(consolidated_list):
             if list_length_breakdown[len(arg)] == minority_list_count:
                 print(f'Argument {index} is not the same length as the majority of the arguments')
 
@@ -141,7 +141,7 @@ def iterables_are_same_length(
 
 
 def iterables_have_same_items(a: Iterable[Any], b: Iterable[Any], *args: Iterable[Any]) -> bool:
-    """See if the iterables have identical items."""
+    """See if the iterables have identical items (both in the identity of each item and the count of each item present)."""
     first_list = a
     remaining_lists = [b, *args]
 
