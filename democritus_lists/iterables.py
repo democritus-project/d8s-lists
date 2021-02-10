@@ -119,12 +119,15 @@ def iterable_has_single_item(iterable: list) -> bool:
     return result
 
 
-# TODO: This function requires one argument... is the signature for this function correct?
-def iterables_are_same_length(*args: list, debug_failure: bool = False) -> bool:
+def iterables_are_same_length(
+    a: Iterable[Any], b: Iterable[Any], *args: Iterable[Any], debug_failure: bool = False
+) -> bool:
     """Return whether or not the given iterables are the same lengths."""
     from democritus_dicts import dict_values
 
-    lengths_1, lengths_2 = itertools.tee(map(len, args))
+    consolidated_list = [a, b, *args]
+    lengths_1, lengths_2 = itertools.tee(map(len, consolidated_list))
+
     result = iterable_has_single_item(lengths_1)
 
     if debug_failure and not result:
@@ -140,19 +143,18 @@ def iterables_are_same_length(*args: list, debug_failure: bool = False) -> bool:
 def iterables_have_same_items(a: Iterable[Any], b: Iterable[Any], *args: Iterable[Any]) -> bool:
     """See if the iterables have identical items."""
     first_list = a
-    remaining_lists = [b]
-    remaining_lists.extend(list(args))
+    remaining_lists = [b, *args]
 
-    if iterables_are_same_length(a, b) and iterables_are_same_length(*remaining_lists):
+    if iterables_are_same_length(a, *remaining_lists):
         for item in first_list:
             first_list_count = first_list.count(item)
             item_counts = [list_.count(item) for list_ in remaining_lists]
             same_count = item_counts[0] == first_list_count
             if not iterable_has_single_item(item_counts) or not same_count:
                 return False
-        return True
     else:
         return False
+    return True
 
 
 def run_length_encoding(iterable: list, output_as_string: bool = False) -> Iterable[str]:

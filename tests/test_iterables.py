@@ -143,8 +143,9 @@ def test_iterables_are_same_length_1():
     assert iterables_are_same_length(l1, l2, l3)
     assert not iterables_are_same_length(l1, l2, l3, l4)
     assert not iterables_are_same_length(l1, l2, l3, l4, l5)
-    assert iterables_are_same_length(l5)
-    assert iterables_are_same_length(l1)
+    assert iterables_are_same_length(l1, l3)
+    assert not iterables_are_same_length(l1, l4)
+    assert not iterables_are_same_length(l4, l5)
     assert not iterables_are_same_length(l1, l5)
 
     assert not iterables_are_same_length(l1, l4, debug_failure=True)
