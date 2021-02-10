@@ -1,38 +1,37 @@
 import itertools
-from typing import Any, Union, List, Dict, Iterable, Tuple
+from typing import Any, Union, List, Dict, Optional, Iterable, Tuple, Iterator
 
 # TODO: consider applying @decorators.listify_first_arg argument to all/most functions in this module
-# TODO: update the type hints on the functions below
 
 
-def iterable_sort_by_length(list_arg: List[Any], **kwargs) -> List[Any]:
+def iterable_sort_by_length(iterable: Iterable[Any], **kwargs) -> List[Any]:
     """."""
-    sorted_list = sorted(list_arg, key=lambda x: len(x), **kwargs)
+    sorted_list = sorted(iterable, key=lambda x: len(x), **kwargs)
     return sorted_list
 
 
-def longest(iterable: List[Any]) -> Any:
+def longest(iterable: Iterable[Any]) -> Any:
     """."""
     longest_item = max(iterable, key=len)
     return longest_item
 
 
-def shortest(iterable: List[Any]) -> Any:
+def shortest(iterable: Iterable[Any]) -> Any:
     """."""
     shortest_item = min(iterable, key=len)
     return shortest_item
 
 
-def flatten(list_arg: list, level: int = None, **kwargs) -> list:
-    """Flatten all items in the list_arg so that they are all items in the same list."""
+def flatten(iterable: Iterable[Any], level: int = None, **kwargs) -> Iterator[Any]:
+    """Flatten all items in the iterable so that they are all items in the same list."""
     import more_itertools
 
-    return more_itertools.collapse(list_arg, levels=level, **kwargs)
+    return more_itertools.collapse(iterable, levels=level, **kwargs)
 
 
-def has_index(iterable: list, index: int) -> bool:
+def has_index(iterable: Iterable[Any], index: int) -> bool:
     """."""
-    # TODO: would it be faster to simply try to get the item at index and handle exceptions
+    # TODO: would it be faster to simply try to get the item at index and handle exceptions?
     index_int = int(index)
     if index_int >= 0 and index_int <= len(iterable) - 1:
         return True
@@ -40,12 +39,12 @@ def has_index(iterable: list, index: int) -> bool:
         return False
 
 
-def types(iterable: list) -> List[str]:
+def types(iterable: Iterable[Any]) -> map:
     """Return a set containing the types of all items in the list_arg."""
     return map(type, iterable)
 
 
-def iterable_item_of_types(iterable, item_types) -> bool:
+def iterable_item_of_types(iterable: Iterable[Any], item_types: Iterable[type]) -> bool:
     """Return True if the iterable has any items that are of the types given in item_types. Otherwise, return False."""
     iterable_types = types(iterable)
     for iterable_type in iterable_types:
@@ -54,7 +53,7 @@ def iterable_item_of_types(iterable, item_types) -> bool:
     return False
 
 
-def iterable_all_items_of_types(iterable, item_types) -> bool:
+def iterable_all_items_of_types(iterable: Iterable[Any], item_types: Iterable[type]) -> bool:
     """Return True if all items in the iterable are of a type given in item_types. Otherwise, return False."""
     iterable_types = types(iterable)
     for iterable_type in iterable_types:
@@ -63,14 +62,14 @@ def iterable_all_items_of_types(iterable, item_types) -> bool:
     return True
 
 
-def iterable_has_all_items_of_type(iterable: list, type_arg) -> bool:
+def iterable_has_all_items_of_type(iterable: Iterable[Any], type_arg: type) -> bool:
     """Return whether or not all iterable in iterable are of the type specified by the type_arg."""
     item_types_1, item_types_2 = itertools.tee(types(iterable))
     result = iterable_has_single_item(item_types_1) and next(item_types_2) == type_arg
     return result
 
 
-def deduplicate(iterable: list) -> list:
+def deduplicate(iterable: Iterable[Any]) -> Iterator[Any]:
     """Deduplicate the iterable."""
     og_iterable, temp_iterable = itertools.tee(iterable)
 
@@ -81,19 +80,17 @@ def deduplicate(iterable: list) -> list:
                 deduplicated_list.append(i)
                 yield i
     else:
-        # TODO: will this work for every type except for dicts and lists???
         yield from list(set(og_iterable))
 
 
-# TODO: is there a function in more_itertools to do this?
-def cycle(list_arg: list, length: Union[int, None] = None) -> list:
-    """Cycle through the list_arg as much as needed."""
+def cycle(iterable: Iterable[Any], length: Optional[int] = None) -> Iterator[Any]:
+    """Cycle through the iterable as much as needed."""
     import itertools
 
     if length is None:
-        return itertools.cycle(list_arg)
+        return itertools.cycle(iterable)
     else:
-        full_cycle = cycle(list_arg, None)
+        full_cycle = cycle(iterable, None)
         partial_cycle = []
         for index, item in enumerate(full_cycle):
             partial_cycle.append(item)
@@ -102,17 +99,17 @@ def cycle(list_arg: list, length: Union[int, None] = None) -> list:
         return partial_cycle
 
 
-def truthy_items(iterable: list) -> list:
+def truthy_items(iterable: Iterable[Any]) -> filter:
     """Return an iterable with only elements of the given iterable which evaluate to True (see https://docs.python.org/3.9/library/stdtypes.html#truth-value-testing)."""
     return filter(lambda x: x, iterable)
 
 
-def nontruthy_items(iterable: list) -> list:
+def nontruthy_items(iterable: Iterable[Any]) -> filter:
     """Return an iterable with only elements of the given iterable which evaluate to False (see https://docs.python.org/3.9/library/stdtypes.html#truth-value-testing)."""
     return filter(lambda x: not x, iterable)
 
 
-def iterable_has_single_item(iterable: list) -> bool:
+def iterable_has_single_item(iterable: Iterable[Any]) -> bool:
     """Return whether the iterable has a single item in it."""
     iterable = deduplicate(iterable)
     result = len(tuple(iterable)) == 1
@@ -157,13 +154,13 @@ def iterables_have_same_items(a: Iterable[Any], b: Iterable[Any], *args: Iterabl
     return True
 
 
-def run_length_encoding(iterable: list, output_as_string: bool = False) -> Iterable[str]:
+def run_length_encoding(iterable: Iterable[Any], output_as_string: bool = False) -> Iterator[str]:
     """Perform run-length encoding on the given array. See https://en.wikipedia.org/wiki/Run-length_encoding for more details."""
     run_length_encodings = (f'{len(tuple(g))}{k}' for k, g in itertools.groupby(iterable))
     return run_length_encodings
 
 
-def iterable_count(iterable: list) -> Dict[Any, int]:
+def iterable_count(iterable: Iterable[Any]) -> Dict[Any, int]:
     """Count each item in the iterable."""
     from democritus_dicts import dict_sort_by_values
 
@@ -174,7 +171,7 @@ def iterable_count(iterable: list) -> Dict[Any, int]:
     return count
 
 
-def iterable_item_index(iterable: list, item: Any) -> int:
+def iterable_item_index(iterable: Iterable[Any], item: Any) -> int:
     """Find the given item in the iterable. Return -1 if the item is not found."""
     try:
         return iterable.index(item)
@@ -182,13 +179,13 @@ def iterable_item_index(iterable: list, item: Any) -> int:
         return -1
 
 
-def iterable_item_indexes(list_arg: list, item: Any) -> Tuple[int, ...]:
+def iterable_item_indexes(iterable: Iterable[Any], item: Any) -> Iterator[int]:
     """Find the given item in the iterable. Return -1 if the item is not found."""
-    indexes = [index for index, value in enumerate(list_arg) if value == item]
+    indexes = (index for index, value in enumerate(iterable) if value == item)
     return indexes
 
 
-def duplicates(iterable: list) -> list:
+def duplicates(iterable: Iterable[Any]) -> Iterator[Any]:
     """Find duplicates in the given iterable."""
     duplicates = []
     for item in iterable:
@@ -196,19 +193,19 @@ def duplicates(iterable: list) -> list:
             yield item
 
 
-def iterable_has_mixed_types(list_arg: list) -> bool:
-    """Return whether or not the list_arg has items with two or more types."""
-    print(f'tuple(types(list_arg)): {tuple(types(list_arg))}')
-    print(tuple(deduplicate(types(list_arg))))
-    return len(tuple(deduplicate(types(list_arg)))) >= 2
+def iterable_has_mixed_types(iterable: Iterable[Any]) -> bool:
+    """Return whether or not the iterable has items with two or more types."""
+    return len(tuple(deduplicate(types(iterable)))) >= 2
 
 
-def iterable_has_single_type(list_arg: list) -> bool:
-    """Return whether or not the list_arg has items of only one type."""
-    return len(tuple(deduplicate(types(list_arg)))) == 1
+def iterable_has_single_type(iterable: Iterable[Any]) -> bool:
+    """Return whether or not the iterable has items of only one type."""
+    return len(tuple(deduplicate(types(iterable)))) == 1
 
 
-def iterable_replace(iterable: list, old_value, new_value, *, replace_in_place: bool = True) -> list:
+def iterable_replace(
+    iterable: Iterable[Any], old_value: Any, new_value: Any, *, replace_in_place: bool = True
+) -> Iterator[Any]:
     """Replace all instances of the old_value with the new_value in the given iterable."""
     for index, value in enumerate(iterable):
         if value == old_value:
@@ -217,7 +214,7 @@ def iterable_replace(iterable: list, old_value, new_value, *, replace_in_place: 
             yield value
 
 
-# def list_entropy(list_arg: list):
+# def list_entropy(list_arg):
 #     """Find the entropy of the items in the given list."""
 #     import math
 #     from nlp import frequencyDistribution

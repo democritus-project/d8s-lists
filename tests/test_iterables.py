@@ -1,6 +1,10 @@
 from collections import OrderedDict
 
 import pytest
+from pyannotate_runtime import collect_types
+
+collect_types.init_types_collection()
+collect_types.start()
 
 from democritus_lists import (
     iterables_are_same_length,
@@ -30,14 +34,14 @@ from democritus_lists import (
 )
 
 
-@pytest.mark.parametrize("test_input,result_contents", [((None, False, [], 0), ()), ((1, 0, True, False), (1, True))])
+@pytest.mark.parametrize("test_input,result_contents", [((None, False, [], 0), ()), ([1, 0, True, False], (1, True))])
 def test_truthy_items_1(test_input, result_contents):
     result = tuple(truthy_items(test_input))
     assert result == result_contents
 
 
 @pytest.mark.parametrize(
-    "test_input,result_contents", [((None, False, [], 0), (None, False, [], 0)), ((1, 0, True, False), (0, False))]
+    "test_input,result_contents", [((None, False, [], 0), (None, False, [], 0)), ([1, 0, True, False], (0, False))]
 )
 def test_nontruthy_items_1(test_input, result_contents):
     result = tuple(nontruthy_items(test_input))
@@ -128,10 +132,15 @@ def test_iterable_sort_by_length_1():
     result = iterable_sort_by_length(l, reverse=True)
     assert result == ['aaa', 'aa', 'a']
 
+    l = ('a', 'aa', 'aaa')
+    result = iterable_sort_by_length(l, reverse=True)
+    assert result == ['aaa', 'aa', 'a']
+
 
 def test_iterable_item_indexes_1():
-    assert iterable_item_indexes([1, 2, 1, 2], 1) == [0, 2]
-    assert iterable_item_indexes([1, 2, 1, 2], 2) == [1, 3]
+    assert tuple(iterable_item_indexes([1, 2, 1, 2], 1)) == (0, 2)
+    assert tuple(iterable_item_indexes([1, 2, 1, 2], 2)) == (1, 3)
+    assert tuple(iterable_item_indexes([1, 2], 3)) == ()
 
 
 def test_flatten_1():
@@ -326,6 +335,8 @@ def test_cycle_1():
     assert l[1] == 2
     assert l[2] == 3
     assert l[3] == 1
+    collect_types.stop()
+    collect_types.dump_stats('type_info.json')
 
 
 # TODO: write test for `remove_nonexistent_items` that test the following cases:
