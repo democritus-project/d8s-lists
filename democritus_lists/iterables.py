@@ -1,12 +1,12 @@
 import itertools
-from typing import Any, Union, List, Dict, Optional, Iterable, Tuple, Iterator
+from typing import Any, Dict, Iterable, Iterator, List, Optional, Sequence, Sized, Type
 
 # TODO: consider applying @decorators.listify_first_arg argument to all/most functions in this module
 
 
 def iterable_sort_by_length(iterable: Iterable[Any], **kwargs) -> List[Any]:
     """."""
-    sorted_list = sorted(iterable, key=lambda x: len(x), **kwargs)
+    sorted_list = sorted(iterable, key=lambda x: len(x), **kwargs)  # pylint: disable=W0108
     return sorted_list
 
 
@@ -29,17 +29,15 @@ def flatten(iterable: Iterable[Any], level: int = None, **kwargs) -> Iterator[An
     return more_itertools.collapse(iterable, levels=level, **kwargs)
 
 
-def has_index(iterable: Iterable[Any], index: int) -> bool:
+def has_index(iterable: Sized, index: int) -> bool:
     """."""
     # TODO: would it be faster to simply try to get the item at index and handle exceptions?
     index_int = int(index)
-    if index_int >= 0 and index_int <= len(iterable) - 1:
-        return True
-    else:
-        return False
+
+    return 0 <= index_int <= len(iterable) - 1
 
 
-def types(iterable: Iterable[Any]) -> map:
+def types(iterable: Iterable[Any]) -> Iterator[Type]:
     """Return a set containing the types of all items in the list_arg."""
     return map(type, iterable)
 
@@ -85,27 +83,30 @@ def deduplicate(iterable: Iterable[Any]) -> Iterator[Any]:
 
 def cycle(iterable: Iterable[Any], length: Optional[int] = None) -> Iterator[Any]:
     """Cycle through the iterable as much as needed."""
-    import itertools
+    full_cycle = itertools.cycle(iterable)
 
-    if length is None:
-        return itertools.cycle(iterable)
-    else:
-        full_cycle = cycle(iterable, None)
-        partial_cycle = []
+    if length:
         for index, item in enumerate(full_cycle):
-            partial_cycle.append(item)
+            yield item
             if index == length - 1:
                 break
-        return partial_cycle
+    else:
+        return full_cycle
 
 
-def truthy_items(iterable: Iterable[Any]) -> filter:
-    """Return an iterable with only elements of the given iterable which evaluate to True (see https://docs.python.org/3.9/library/stdtypes.html#truth-value-testing)."""
+def truthy_items(iterable: Iterable[Any]) -> Iterator[Any]:
+    """Return an iterable with only elements of the given iterable which evaluate to True.
+
+    (see https://docs.python.org/3.9/library/stdtypes.html#truth-value-testing)
+    """
     return filter(lambda x: x, iterable)
 
 
-def nontruthy_items(iterable: Iterable[Any]) -> filter:
-    """Return an iterable with only elements of the given iterable which evaluate to False (see https://docs.python.org/3.9/library/stdtypes.html#truth-value-testing)."""
+def nontruthy_items(iterable: Iterable[Any]) -> Iterator[Any]:
+    """Return an iterable with only elements of the given iterable which evaluate to False.
+
+    (see https://docs.python.org/3.9/library/stdtypes.html#truth-value-testing)
+    """
     return filter(lambda x: not x, iterable)
 
 
@@ -116,9 +117,7 @@ def iterable_has_single_item(iterable: Iterable[Any]) -> bool:
     return result
 
 
-def iterables_are_same_length(
-    a: Iterable[Any], b: Iterable[Any], *args: Iterable[Any], debug_failure: bool = False
-) -> bool:
+def iterables_are_same_length(a: Sized, b: Sized, *args: Sized, debug_failure: bool = False) -> bool:
     """Return whether or not the given iterables are the same lengths."""
     from democritus_dicts import dict_values
 
@@ -137,8 +136,8 @@ def iterables_are_same_length(
     return result
 
 
-def iterables_have_same_items(a: Iterable[Any], b: Iterable[Any], *args: Iterable[Any]) -> bool:
-    """See if the iterables have identical items (both in the identity of each item and the count of each item present)."""
+def iterables_have_same_items(a: Sequence, b: Sequence, *args: Sequence) -> bool:  # noqa: CCR001
+    """Return whether iterables have identical items (considering both identity and count)."""
     first_list = a
     remaining_lists = [b, *args]
 
@@ -154,8 +153,11 @@ def iterables_have_same_items(a: Iterable[Any], b: Iterable[Any], *args: Iterabl
     return True
 
 
-def run_length_encoding(iterable: Iterable[Any], output_as_string: bool = False) -> Iterator[str]:
-    """Perform run-length encoding on the given array. See https://en.wikipedia.org/wiki/Run-length_encoding for more details."""
+def run_length_encoding(iterable: Iterable[Any]) -> Iterator[str]:
+    """Perform run-length encoding on the given array.
+
+    See https://en.wikipedia.org/wiki/Run-length_encoding for more details.
+    """
     run_length_encodings = (f'{len(tuple(g))}{k}' for k, g in itertools.groupby(iterable))
     return run_length_encodings
 
@@ -164,14 +166,14 @@ def iterable_count(iterable: Iterable[Any]) -> Dict[Any, int]:
     """Count each item in the iterable."""
     from democritus_dicts import dict_sort_by_values
 
-    count = {}
+    count: Dict[Any, int] = {}
     for i in iterable:
         count[i] = count.get(i, 0) + 1
     count = dict_sort_by_values(count)
     return count
 
 
-def iterable_item_index(iterable: Iterable[Any], item: Any) -> int:
+def iterable_item_index(iterable: Sequence, item: Any) -> int:
     """Find the given item in the iterable. Return -1 if the item is not found."""
     try:
         return iterable.index(item)
@@ -185,9 +187,8 @@ def iterable_item_indexes(iterable: Iterable[Any], item: Any) -> Iterator[int]:
     return indexes
 
 
-def duplicates(iterable: Iterable[Any]) -> Iterator[Any]:
+def duplicates(iterable: Sequence) -> Iterator[Sequence]:
     """Find duplicates in the given iterable."""
-    duplicates = []
     for item in iterable:
         if iterable.count(item) > 1:
             yield item
@@ -203,11 +204,9 @@ def iterable_has_single_type(iterable: Iterable[Any]) -> bool:
     return len(tuple(deduplicate(types(iterable)))) == 1
 
 
-def iterable_replace(
-    iterable: Iterable[Any], old_value: Any, new_value: Any, *, replace_in_place: bool = True
-) -> Iterator[Any]:
+def iterable_replace(iterable: Iterable[Any], old_value: Any, new_value: Any) -> Iterator[Any]:
     """Replace all instances of the old_value with the new_value in the given iterable."""
-    for index, value in enumerate(iterable):
+    for value in iterable:
         if value == old_value:
             yield new_value
         else:
