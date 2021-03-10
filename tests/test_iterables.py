@@ -1,37 +1,38 @@
 from collections import OrderedDict
 
 import pytest
-from pyannotate_runtime import collect_types
-
-collect_types.init_types_collection()
-collect_types.start()
 
 from democritus_lists import (
-    iterables_are_same_length,
-    deduplicate,
-    flatten,
-    run_length_encoding,
-    iterable_item_index,
-    iterable_count,
-    duplicates,
-    iterable_replace,
-    has_index,
-    iterable_has_mixed_types,
-    iterable_has_single_type,
-    types,
-    iterable_item_indexes,
-    iterable_sort_by_length,
-    longest,
-    shortest,
-    iterables_have_same_items,
-    iterable_has_single_item,
-    iterable_item_of_types,
-    iterable_all_items_of_types,
     cycle,
+    deduplicate,
+    duplicates,
+    flatten,
+    has_index,
+    iterable_all_items_of_types,
+    iterable_count,
     iterable_has_all_items_of_type,
-    truthy_items,
+    iterable_has_mixed_types,
+    iterable_has_single_item,
+    iterable_has_single_type,
+    iterable_item_index,
+    iterable_item_indexes,
+    iterable_item_of_types,
+    iterable_replace,
+    iterable_sort_by_length,
+    iterables_are_same_length,
+    iterables_have_same_items,
+    longest,
     nontruthy_items,
+    run_length_encoding,
+    shortest,
+    truthy_items,
+    types,
 )
+
+# from pyannotate_runtime import collect_types
+
+# collect_types.init_types_collection()
+# collect_types.start()
 
 
 @pytest.mark.parametrize("test_input,result_contents", [((None, False, [], 0), ()), ([1, 0, True, False], (1, True))])
@@ -335,8 +336,8 @@ def test_cycle_1():
     assert l[1] == 2
     assert l[2] == 3
     assert l[3] == 1
-    collect_types.stop()
-    collect_types.dump_stats('type_info.json')
+    # collect_types.stop()
+    # collect_types.dump_stats('type_info.json')
 
 
 # TODO: write test for `remove_nonexistent_items` that test the following cases:
