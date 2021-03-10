@@ -207,13 +207,13 @@ def test_iterable_replace_docs_1():
     assert old_list == [1, 1, 1]
 
     old_list = [1, 2, 3]
-    new_list = tuple(iterable_replace(old_list, 1, 4, replace_in_place=False))
+    new_list = tuple(iterable_replace(old_list, 1, 4))
     assert new_list == (4, 2, 3)
     # test immutability
     assert old_list == [1, 2, 3]
 
     old_list = [[1], [2, 2], [3, 3, 3]]
-    new_list = tuple(iterable_replace(old_list, [1], [4, 4, 4, 4], replace_in_place=False))
+    new_list = tuple(iterable_replace(old_list, [1], [4, 4, 4, 4]))
     assert new_list == ([4, 4, 4, 4], [2, 2], [3, 3, 3])
     # test immutability
     assert old_list == [[1], [2, 2], [3, 3, 3]]
@@ -330,7 +330,7 @@ def test_iterable_item_index_1():
 
 
 def test_cycle_1():
-    l = cycle([1, 2, 3], length=42)
+    l = tuple(cycle([1, 2, 3], length=42))
     assert len(l) == 42
     assert l[0] == 1
     assert l[1] == 2
