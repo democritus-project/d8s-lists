@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 import pytest
 
-from democritus_lists import (
+from d8s_lists import (
     cycle,
     deduplicate,
     duplicates,

@@ -1,8 +1,8 @@
 # Democritus Lists
 
-[![PyPI](https://img.shields.io/pypi/v/democritus-lists.svg)](https://pypi.python.org/pypi/democritus-lists)
-[![Build Status](https://travis-ci.com/democritus-project/democritus-lists.svg?branch=main)](https://travis-ci.com/democritus-project/democritus-lists)
-[![codecov](https://codecov.io/gh/democritus-project/democritus-lists/branch/main/graph/badge.svg?token=V0WOIXRGMM)](https://codecov.io/gh/democritus-project/democritus-lists)
+[![PyPI](https://img.shields.io/pypi/v/d8s-lists.svg)](https://pypi.python.org/pypi/d8s-lists)
+[![Build Status](https://travis-ci.com/democritus-project/d8s-lists.svg?branch=main)](https://travis-ci.com/democritus-project/d8s-lists)
+[![codecov](https://codecov.io/gh/democritus-project/d8s-lists/branch/main/graph/badge.svg?token=V0WOIXRGMM)](https://codecov.io/gh/democritus-project/d8s-lists)
 
 Democritus functions<sup>[1]</sup> for working with lists.
 
