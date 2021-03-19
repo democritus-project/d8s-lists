@@ -43,28 +43,27 @@ def types(iterable: Iterable[Any]) -> Iterator[Type]:
 
 
 def iterable_item_of_types(iterable: Iterable[Any], item_types: Iterable[type]) -> bool:
-    """Return True if the iterable has any items that are of the types given in item_types. Otherwise, return False."""
-    iterable_types = types(iterable)
-    for iterable_type in iterable_types:
-        if iterable_type in item_types:
+    """Return True if the iterable has any item that is of the item_types. Otherwise, return False."""
+    for i in iterable:
+        if type(i) in item_types:
             return True
     return False
 
 
 def iterable_all_items_of_types(iterable: Iterable[Any], item_types: Iterable[type]) -> bool:
     """Return True if all items in the iterable are of a type given in item_types. Otherwise, return False."""
-    iterable_types = types(iterable)
-    for iterable_type in iterable_types:
-        if iterable_type not in item_types:
+    for i in iterable:
+        if type(i) not in item_types:
             return False
     return True
 
 
 def iterable_has_all_items_of_type(iterable: Iterable[Any], type_arg: type) -> bool:
     """Return whether or not all iterable in iterable are of the type specified by the type_arg."""
-    item_types_1, item_types_2 = itertools.tee(types(iterable))
-    result = iterable_has_single_item(item_types_1) and next(item_types_2) == type_arg
-    return result
+    for i in iterable:
+        if type(i) != type_arg:
+            return False
+    return True
 
 
 def deduplicate(iterable: Iterable[Any]) -> Iterator[Any]:
