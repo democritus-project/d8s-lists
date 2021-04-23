@@ -1,4 +1,5 @@
 import itertools
+from collections import Counter
 from typing import Any, Dict, Iterable, Iterator, List, Optional, Sequence, Sized, Type
 
 # TODO: consider applying @decorators.listify_first_arg argument to all/most functions in this module
@@ -165,10 +166,9 @@ def iterable_count(iterable: Iterable[Any]) -> Dict[Any, int]:
     """Count each item in the iterable."""
     from d8s_dicts import dict_sort_by_values
 
-    count: Dict[Any, int] = {}
-    for i in iterable:
-        count[i] = count.get(i, 0) + 1
-    count = dict_sort_by_values(count)
+    counter: Counter = Counter()
+    counter.update(iterable)
+    count = dict_sort_by_values(counter)
     return count
 
 
