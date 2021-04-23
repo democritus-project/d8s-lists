@@ -2,6 +2,8 @@ import itertools
 from collections import Counter
 from typing import Any, Dict, Iterable, Iterator, List, Optional, Sequence, Sized, Type
 
+from d8s_dicts import dict_sort_by_values, dict_values
+
 # TODO: consider applying @decorators.listify_first_arg argument to all/most functions in this module
 
 
@@ -119,8 +121,6 @@ def iterable_has_single_item(iterable: Iterable[Any]) -> bool:
 
 def iterables_are_same_length(a: Sized, b: Sized, *args: Sized, debug_failure: bool = False) -> bool:
     """Return whether or not the given iterables are the same lengths."""
-    from d8s_dicts import dict_values
-
     consolidated_list = [a, b, *args]
     lengths_1, lengths_2 = itertools.tee(map(len, consolidated_list))
 
@@ -164,8 +164,6 @@ def run_length_encoding(iterable: Iterable[Any]) -> Iterator[str]:
 
 def iterable_count(iterable: Iterable[Any]) -> Dict[Any, int]:
     """Count each item in the iterable."""
-    from d8s_dicts import dict_sort_by_values
-
     counter: Counter = Counter()
     counter.update(iterable)
     count = dict_sort_by_values(counter)
