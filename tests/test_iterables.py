@@ -50,29 +50,29 @@ def test_nontruthy_items_1(test_input, result_contents):
 
 
 def test_iterable_has_all_items_of_type_1():
-    assert not iterable_has_all_items_of_type([1, 'a'], int)
+    assert not iterable_has_all_items_of_type([1, "a"], int)
     assert iterable_has_all_items_of_type([1, 2, 3, 4, 5], int)
     assert iterable_has_all_items_of_type([1, 2], int)
     assert not iterable_has_all_items_of_type([1, {2}], int)
 
 
 def test_iterable_all_items_of_types_1():
-    assert not iterable_all_items_of_types([1, 'a'], (int,))
-    assert iterable_all_items_of_types([1, 'a'], (int, str))
-    assert iterable_all_items_of_types([1, 'a', 3, 4], (int, str))
-    assert not iterable_all_items_of_types([1, 'a', 3, {4}], (int, str))
+    assert not iterable_all_items_of_types([1, "a"], (int,))
+    assert iterable_all_items_of_types([1, "a"], (int, str))
+    assert iterable_all_items_of_types([1, "a", 3, 4], (int, str))
+    assert not iterable_all_items_of_types([1, "a", 3, {4}], (int, str))
 
 
 def test_iterable_has_mixed_types_1():
-    assert iterable_has_mixed_types([0, 'a'])
-    assert iterable_has_mixed_types([0, 'a'])
+    assert iterable_has_mixed_types([0, "a"])
+    assert iterable_has_mixed_types([0, "a"])
     assert not iterable_has_mixed_types([0, 1])
     assert not iterable_has_mixed_types([{}, {}])
 
 
 def test_iterable_has_single_type_1():
-    assert not iterable_has_single_type([0, 'a'])
-    assert not iterable_has_single_type([0, 'a'])
+    assert not iterable_has_single_type([0, "a"])
+    assert not iterable_has_single_type([0, "a"])
     assert iterable_has_single_type([0, 1])
     assert iterable_has_single_type([{}, {}])
 
@@ -108,34 +108,34 @@ def test_iterables_have_same_items_docs_2():
 
 
 def test_iterable_item_of_types_1():
-    assert iterable_item_of_types([{'a': 1}, 1, 2, 3], (dict,))
+    assert iterable_item_of_types([{"a": 1}, 1, 2, 3], (dict,))
     assert not iterable_item_of_types([1, 2, 3], (dict,))
 
 
 def test_longest_1():
-    l = ['a', 'aa', 'aaa']
+    l = ["a", "aa", "aaa"]
     result = longest(l)
-    assert result == 'aaa'
+    assert result == "aaa"
 
 
 def test_shortest_1():
-    l = ['a', 'aa', 'aaa']
+    l = ["a", "aa", "aaa"]
     result = shortest(l)
-    assert result == 'a'
+    assert result == "a"
 
 
 def test_iterable_sort_by_length_1():
-    l = ['a', 'aa', 'aaa']
+    l = ["a", "aa", "aaa"]
     result = iterable_sort_by_length(l)
-    assert result == ['a', 'aa', 'aaa']
+    assert result == ["a", "aa", "aaa"]
 
-    l = ['a', 'aa', 'aaa']
+    l = ["a", "aa", "aaa"]
     result = iterable_sort_by_length(l, reverse=True)
-    assert result == ['aaa', 'aa', 'a']
+    assert result == ["aaa", "aa", "a"]
 
-    l = ('a', 'aa', 'aaa')
+    l = ("a", "aa", "aaa")
     result = iterable_sort_by_length(l, reverse=True)
-    assert result == ['aaa', 'aa', 'a']
+    assert result == ["aaa", "aa", "a"]
 
 
 def test_iterable_item_indexes_1():
@@ -153,20 +153,20 @@ def test_flatten_1():
 
 
 def test_has_index_1():
-    assert not has_index(['a', 'b', 'c'], -1)
-    assert has_index(['a', 'b', 'c'], 0)
-    assert has_index(['a', 'b', 'c'], 1)
-    assert has_index(['a', 'b', 'c'], 2)
-    assert not has_index(['a', 'b', 'c'], 3)
-    assert not has_index(['a', 'b', 'c'], 4)
-    assert not has_index(['a', 'b', 'c'], 4000)
+    assert not has_index(["a", "b", "c"], -1)
+    assert has_index(["a", "b", "c"], 0)
+    assert has_index(["a", "b", "c"], 1)
+    assert has_index(["a", "b", "c"], 2)
+    assert not has_index(["a", "b", "c"], 3)
+    assert not has_index(["a", "b", "c"], 4)
+    assert not has_index(["a", "b", "c"], 4000)
 
 
 def test_iterables_are_same_length_1():
-    l1 = ['a']
-    l2 = ['b']
-    l3 = ['a']
-    l4 = ['a', 'b']
+    l1 = ["a"]
+    l2 = ["b"]
+    l3 = ["a"]
+    l4 = ["a", "b"]
     l5 = []
 
     assert iterables_are_same_length(l1, l2)
@@ -184,7 +184,7 @@ def test_iterables_are_same_length_1():
 
 def test_types_1():
     assert tuple(types([1, 2, 3])) == (int, int, int)
-    assert tuple(types(['a', 'b', 'c'])) == (str, str, str)
+    assert tuple(types(["a", "b", "c"])) == (str, str, str)
 
 
 def test_iterable_replace_docs_1():
@@ -218,11 +218,11 @@ def test_iterable_replace_docs_1():
     # test immutability
     assert old_list == [[1], [2, 2], [3, 3, 3]]
 
-    old_list = [[{'a': 1}], [{'b': 2}], [{'c': 3}]]
-    new_list = tuple(iterable_replace(old_list, [{'a': 1}], [{'e': 1}]))
-    assert new_list == ([{'e': 1}], [{'b': 2}], [{'c': 3}])
+    old_list = [[{"a": 1}], [{"b": 2}], [{"c": 3}]]
+    new_list = tuple(iterable_replace(old_list, [{"a": 1}], [{"e": 1}]))
+    assert new_list == ([{"e": 1}], [{"b": 2}], [{"c": 3}])
     # test immutability
-    assert old_list == [[{'a': 1}], [{'b': 2}], [{'c': 3}]]
+    assert old_list == [[{"a": 1}], [{"b": 2}], [{"c": 3}]]
 
 
 def test_deduplicate_1():
@@ -230,8 +230,8 @@ def test_deduplicate_1():
 
 
 def test_deduplicate_dicts():
-    assert tuple(deduplicate([{'a': 1}, 1, {'b': 2}])) == ({'a': 1}, 1, {'b': 2})
-    assert tuple(deduplicate([{'a': 1}, {'a': 1}, {'b': 2}])) == ({'a': 1}, {'b': 2})
+    assert tuple(deduplicate([{"a": 1}, 1, {"b": 2}])) == ({"a": 1}, 1, {"b": 2})
+    assert tuple(deduplicate([{"a": 1}, {"a": 1}, {"b": 2}])) == ({"a": 1}, {"b": 2})
 
 
 def test_duplicates():
@@ -245,70 +245,70 @@ def test_duplicates():
 
 
 def test_run_length_encoding_1():
-    assert tuple(run_length_encoding('foobar')) == (
-        '1f',
-        '2o',
-        '1b',
-        '1a',
-        '1r',
+    assert tuple(run_length_encoding("foobar")) == (
+        "1f",
+        "2o",
+        "1b",
+        "1a",
+        "1r",
     )
-    assert tuple(run_length_encoding(list('foobar'))) == (
-        '1f',
-        '2o',
-        '1b',
-        '1a',
-        '1r',
+    assert tuple(run_length_encoding(list("foobar"))) == (
+        "1f",
+        "2o",
+        "1b",
+        "1a",
+        "1r",
     )
 
-    assert tuple(run_length_encoding(['a'])) == ('1a',)
-    assert tuple(run_length_encoding(['a', 'a'])) == ('2a',)
-    assert tuple(run_length_encoding(['a', 'b'])) == (
-        '1a',
-        '1b',
+    assert tuple(run_length_encoding(["a"])) == ("1a",)
+    assert tuple(run_length_encoding(["a", "a"])) == ("2a",)
+    assert tuple(run_length_encoding(["a", "b"])) == (
+        "1a",
+        "1b",
     )
-    assert tuple(run_length_encoding(['a', 'a', 'b'])) == (
-        '2a',
-        '1b',
+    assert tuple(run_length_encoding(["a", "a", "b"])) == (
+        "2a",
+        "1b",
     )
-    assert tuple(run_length_encoding(['a', 'b', 'b'])) == (
-        '1a',
-        '2b',
+    assert tuple(run_length_encoding(["a", "b", "b"])) == (
+        "1a",
+        "2b",
     )
-    assert tuple(run_length_encoding(['a', 'b', 'a'])) == (
-        '1a',
-        '1b',
-        '1a',
+    assert tuple(run_length_encoding(["a", "b", "a"])) == (
+        "1a",
+        "1b",
+        "1a",
     )
 
 
 def test_run_length_encoding_2():
-    assert tuple(run_length_encoding(['aa'])) == ('1aa',)
-    assert tuple(run_length_encoding(['aa', 'aa'])) == ('2aa',)
-    assert tuple(run_length_encoding(['aa', 'bbb'])) == (
-        '1aa',
-        '1bbb',
+    assert tuple(run_length_encoding(["aa"])) == ("1aa",)
+    assert tuple(run_length_encoding(["aa", "aa"])) == ("2aa",)
+    assert tuple(run_length_encoding(["aa", "bbb"])) == (
+        "1aa",
+        "1bbb",
     )
-    assert tuple(run_length_encoding(['aa', 'aa', 'bbb'])) == (
-        '2aa',
-        '1bbb',
+    assert tuple(run_length_encoding(["aa", "aa", "bbb"])) == (
+        "2aa",
+        "1bbb",
     )
-    assert tuple(run_length_encoding(['aa', 'bbb', 'bbb'])) == (
-        '1aa',
-        '2bbb',
+    assert tuple(run_length_encoding(["aa", "bbb", "bbb"])) == (
+        "1aa",
+        "2bbb",
     )
-    assert tuple(run_length_encoding(['aa', 'bbb', 'aa'])) == (
-        '1aa',
-        '1bbb',
-        '1aa',
+    assert tuple(run_length_encoding(["aa", "bbb", "aa"])) == (
+        "1aa",
+        "1bbb",
+        "1aa",
     )
-    assert tuple(run_length_encoding('WWWWWWWWWWWWBWWWWWWWWWWWWBBBWWWWWWWWWWWWWWWWWWWWWWWWBWWWWWWWWWWWWWW')) == (
-        '12W',
-        '1B',
-        '12W',
-        '3B',
-        '24W',
-        '1B',
-        '14W',
+    assert tuple(run_length_encoding("WWWWWWWWWWWWBWWWWWWWWWWWWBBBWWWWWWWWWWWWWWWWWWWWWWWWBWWWWWWWWWWWWWW")) == (
+        "12W",
+        "1B",
+        "12W",
+        "3B",
+        "24W",
+        "1B",
+        "14W",
     )
 
 
@@ -318,15 +318,15 @@ def test_multiple_duplicates():
 
 def test_iterable_count_1():
     assert iterable_count([1, 2, 3, 2, 3]) == OrderedDict([(1, 1), (2, 2), (3, 2)])
-    assert iterable_count(['bob', 'bob', 'frank', 'bob', 'john', 'frank', 'tim', 'tim']) == OrderedDict(
-        [('john', 1), ('frank', 2), ('tim', 2), ('bob', 3)]
+    assert iterable_count(["bob", "bob", "frank", "bob", "john", "frank", "tim", "tim"]) == OrderedDict(
+        [("john", 1), ("frank", 2), ("tim", 2), ("bob", 3)]
     )
 
 
 def test_iterable_item_index_1():
-    assert iterable_item_index(['a', 'b'], 'a') == 0
-    assert iterable_item_index(['a', 'b'], 'b') == 1
-    assert iterable_item_index(['a', 'b'], 'c') == -1
+    assert iterable_item_index(["a", "b"], "a") == 0
+    assert iterable_item_index(["a", "b"], "b") == 1
+    assert iterable_item_index(["a", "b"], "c") == -1
 
 
 def test_cycle_1():
