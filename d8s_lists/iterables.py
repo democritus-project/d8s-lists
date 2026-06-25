@@ -25,7 +25,7 @@ def shortest(iterable: Iterable[Any]) -> Any:
     return shortest_item
 
 
-def flatten(iterable: Iterable[Any], level: int = None, **kwargs) -> Iterator[Any]:
+def flatten(iterable: Iterable[Any], level: Optional[int] = None, **kwargs) -> Iterator[Any]:
     """Flatten all items in the iterable so that they are all items in the same list."""
     import more_itertools
 
@@ -64,7 +64,7 @@ def iterable_all_items_of_types(iterable: Iterable[Any], item_types: Iterable[ty
 def iterable_has_all_items_of_type(iterable: Iterable[Any], type_arg: type) -> bool:
     """Return whether or not all iterable in iterable are of the type specified by the type_arg."""
     for i in iterable:
-        if type(i) != type_arg:
+        if type(i) is not type_arg:
             return False
     return True
 
@@ -93,7 +93,7 @@ def cycle(iterable: Iterable[Any], length: Optional[int] = None) -> Iterator[Any
             if index == length - 1:
                 break
     else:
-        return full_cycle
+        return
 
 
 def truthy_items(iterable: Iterable[Any]) -> Iterator[Any]:
@@ -131,7 +131,7 @@ def iterables_are_same_length(a: Sized, b: Sized, *args: Sized, debug_failure: b
         minority_list_count = min(dict_values(list_length_breakdown))
         for index, arg in enumerate(consolidated_list):
             if list_length_breakdown[len(arg)] == minority_list_count:
-                print(f'Argument {index} is not the same length as the majority of the arguments')
+                print(f"Argument {index} is not the same length as the majority of the arguments")
 
     return result
 
@@ -158,7 +158,7 @@ def run_length_encoding(iterable: Iterable[Any]) -> Iterator[str]:
 
     See https://en.wikipedia.org/wiki/Run-length_encoding for more details.
     """
-    run_length_encodings = (f'{len(tuple(g))}{k}' for k, g in itertools.groupby(iterable))
+    run_length_encodings = (f"{len(tuple(g))}{k}" for k, g in itertools.groupby(iterable))
     return run_length_encodings
 
 
